@@ -51,4 +51,38 @@ async function crearResenia(req, res) {
     return res.status(400).json({ msg: e.message });
   }
 }
-export { obtenerLibro, crearResenia };
+
+async function obtenerLibros(req, res) {
+  try {
+    const { l_genero } = req.params;
+    const {
+      body: { l_tipo },
+    } = req;
+    console.log(l_genero);
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        accion: "obtener_libros_por_categoria",
+      },
+    };
+
+    const datos = {
+      l_genero,
+      l_tipo,
+    };
+    const url = `${process.env.URL}/libro/obtener-libros`;
+    const { data } = await axios.post(url, datos, config);
+    console.log(data);
+    console.log("linea 72");
+    if (!data || !data.status || data.status !== 200) {
+      throw new Error("Error: no se encontraron libros");
+    }
+    return res.status(200).json(data);
+  } catch (error) {
+    const e = new Error(
+      "Error: No se pudo obtener los libros de esta categoria"
+    );
+    return res.status(400).json({ msg: e.message });
+  }
+}
+export { obtenerLibro, crearResenia, obtenerLibros };
